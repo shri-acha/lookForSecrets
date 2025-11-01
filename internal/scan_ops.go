@@ -1,6 +1,7 @@
 package internal
 import (
 	"github.com/shri-acha/lookForSecrets.git/config"
+	"github.com/shri-acha/lookForSecrets.git/utils"
 	"github.com/go-resty/resty/v2"
 	"encoding/json"
 	"fmt"
@@ -8,16 +9,37 @@ import (
 )
 
 
-func ScanKeywordMatch(config *config.InputConfig){
+func ScanKeywordMatch(cfg *config.InputConfig){
 	
 	githubPAT := os.Getenv("GITHUB_PAT")
 
+	key,err := utils.GetCSVValueAtIndex(cfg.FilePath,cfg.ScanIdx)
+
+	if err != nil {
+	fmt.Println(err)
+	}
+
 	client := resty.New()
+
+	// config := config.EmailConfig{
+	// 	SMTPHost: "smtp.gmail.com",
+	// 	SMTPPort: "587",
+	// 	Username: "happy.irhs@gmail.com",
+	// 	Password: os.Getenv("GMAIL_APP_PASSWORD"), // Use App Password, not regular password
+	// }
+	
+	// // Create email message
+	// msg := config.EmailMessage{
+	// 	From:    "happy.irhs@gmail.com",
+	// 	To:      []string{"happy.irhs@gmail.com"},
+	// 	Subject: "Leaked Key Found!",
+	// 	Body:    "A key has been detected in public repositories",
+	// }
 
 	res, err := client.R().
 	SetHeader("Authorization",fmt.Sprintf(" token %s",githubPAT)).	
 	SetHeader("Accept","application/vnd.github.v3.text-match+json").
-	Get("https://api.github.com/search/code?q=Hello")
+	Get(fmt.Sprintf("https://api.github.com/search/code?q=%s",key))
 
 	if err != nil {
 		fmt.Println(err)
@@ -30,7 +52,6 @@ func ScanKeywordMatch(config *config.InputConfig){
 	}
 	fmt.Println("SCAN-RESULT")
 	items := data["items"].([]interface{}) 
-	fmt.Println(items)
 
 	for _,raw_item := range items{
 		item := raw_item.(map[string]interface{})
@@ -39,6 +60,14 @@ func ScanKeywordMatch(config *config.InputConfig){
 			item["path"].(string), 
 			item["text_matches"].([]interface{})[0].(map[string]interface{})["fragment"].(string), 
 			item["score"].(float64)))
-		}
+
+
+	if err != nil {
+		fmt.Printf("Error sending email: %v\n", err)
+		return
+	}
+	
+	fmt.Println("Email sent successfully!")
+	}
 
 }

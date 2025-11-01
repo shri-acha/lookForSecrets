@@ -3,8 +3,9 @@ package config
 type InputConfig struct {
 	FilePath string   `clap:"--input,-I"`
 	Scan bool `clap:"--scan,-S"`
-	ScanIdx int `clap: "--scan-index,-X"`
+	ScanIdx int `clap:"--scan-index,-X"`
 }
+
 // email config
 type EmailConfig struct {
 	SMTPHost string

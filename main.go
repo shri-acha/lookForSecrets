@@ -38,5 +38,4 @@ func main() {
 	}else if cfg.Scan && cfg.ScanIdx < 0 {
 		fmt.Println("missing scan index!")
 	}
-
 }
