@@ -1,12 +1,14 @@
 # setup basic cli (x)
 > enable user to choose csv to consume
+lookForSecrets -I inventory.csv
 
-# setup csv interfacing ()
+# setup csv interfacing (x)
 > create an example csv interfacing structs
 > iteratively parse fields through csv token field
 > secrets = (type,provider,creator,value)
 
-# integrate an api to get simulated code ()
+# integrate an api to get simulated code (x)
+
 > load the recursively generated and loaded codebase{we assume only code,config,etc exist within the codebase}
 > for each iteration of the token field {check for the codebase for match of the pattern(use fuzzy?(has confidence))}
 
